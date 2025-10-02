@@ -1,0 +1,39 @@
+name: Auto-CI for Theme
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    name: Build and Upload Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install Gulp CLI
+        run: npm install -g gulp-cli
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build theme
+        run: yarn zip
+
+      - name: Upload as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: theme
+          path: dist/headline.zip
+          retention-days: 28
